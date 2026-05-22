@@ -1,0 +1,82 @@
+# ==========================================
+# Git LFS (Large File Storage) Configuration
+# ==========================================
+# Large binary files to track with Git LFS
+
+# Audio Assets
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.flac filter=lfs diff=lfs merge=lfs -text
+
+# Image and Texture Assets
+*.png filter=lfs diff=lfs merge=lfs -text
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.gif filter=lfs diff=lfs merge=lfs -text
+*.bmp filter=lfs diff=lfs merge=lfs -text
+*.tif filter=lfs diff=lfs merge=lfs -text
+*.tiff filter=lfs diff=lfs merge=lfs -text
+
+# Fonts
+*.ttf filter=lfs diff=lfs merge=lfs -text
+*.otf filter=lfs diff=lfs merge=lfs -text
+
+# 3D Models
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.obj filter=lfs diff=lfs merge=lfs -text
+*.max filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+
+# Video and Media Assets
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.avi filter=lfs diff=lfs merge=lfs -text
+*.webm filter=lfs diff=lfs merge=lfs -text
+
+# Compressed Archives
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.rar filter=lfs diff=lfs merge=lfs -text
+
+# Native Unity Binary Assets (if serialized as binary)
+*.cubemap filter=lfs diff=lfs merge=lfs -text
+*.unitypackage filter=lfs diff=lfs merge=lfs -text
+
+# ==========================================
+# Line Endings & Text Settings
+# ==========================================
+# Auto-detect text files and normalize line endings to LF on commit
+* text=auto
+
+# Explicitly mark code and text files to be normalized
+*.cs text diff=csharp
+*.cginc text
+*.shader text
+*.json text
+*.xml text
+*.yaml text
+*.md text
+*.txt text
+*.meta text
+
+# Force serialization text files to use LF (highly recommended for Unity merging)
+*.unity text merge=unityyaml
+*.prefab text merge=unityyaml
+*.asset text merge=unityyaml
+*.controller text merge=unityyaml
+*.mat text merge=unityyaml
+*.overrideController text merge=unityyaml
+*.physicMaterial2D text merge=unityyaml
+*.physicMaterial text merge=unityyaml
+*.playable text merge=unityyaml
+*.mask text merge=unityyaml
+
+# ==========================================
+# GitHub Linguist Overrides (Language Stats)
+# ==========================================
+# Exclude third-party TextMesh Pro from language statistics
+"Assets/TextMesh Pro/**" linguist-vendored
+
