@@ -16,10 +16,7 @@ An endless vertical platformer developed in Unity 2D. Control the player charact
 1. [🎮 Gameplay Mechanics](#-gameplay-mechanics)
 2. [⚙️ Architecture & Design Patterns](#-architecture--design-patterns)
 3. [📂 Project Structure](#-project-structure)
-4. [🚀 Getting Started](#-getting-started)
-5. [🕹️ How to Play](#%EF%B8%8F-how-to-play)
-6. [🛠️ Development Details](#%EF%B8%8F-development-details)
-7. [📄 License](#-license)
+4. [📄 License](#-license)
 
 ---
 
@@ -126,60 +123,6 @@ Assets/
 ├── Sprites/              # 2D Sprite sheets, characters, and UI icons
 └── TextMesh Pro/         # Text styles and visual typography
 ```
-
-### 📜 Core Script Directory
-
-Below is the directory mapping of the C# scripts in [Assets/Scripts](Assets/Scripts):
-
-| Script | Purpose / Core Responsibility | Key Methods / API |
-| :--- | :--- | :--- |
-| [PlayerMovement.cs](Assets/Scripts/PlayerMovement.cs) | Follows mouse, applies 2D gravity, triggers jumps, bounces, and manages player animator fields. | `Bounce()`, `IsGrounded()`, `FollowCursor()` |
-| [Banana.cs](Assets/Scripts/Banana.cs) | Controls falling banana obstacles, handles collection triggers, score additions, and fade animations. | `Fall()`, `OnTriggerEnter2D()`, `ResetObject()` |
-| [Cloud.cs](Assets/Scripts/Cloud.cs) | Drifts horizontally, reverses at edges, handles double-score multiplier and particle triggers. | `MoveHorizontal()`, `SetDirection()`, `ResetObject()` |
-| [ObjectSpawner.cs](Assets/Scripts/ObjectSpawner.cs) | Dynamically spawns platforms based on camera height. Configures difficulty scaling (variance, scale). | `Initialize()`, `SpawnBanana()`, `SpawnCloud()` |
-| [ObjectPoolManager.cs](Assets/Scripts/ObjectPoolManager.cs) | Handles creation, retrieval, and recycling of pooled game objects via string-based queues. | `SpawnObject()`, `DespawnObject()`, `FillPool()` |
-| [GameManager.cs](Assets/Scripts/GameManager.cs) | Global state manager driving menus, control overrides, and event dispatchers. | `SetStatePlay()`, `SetStateStart()` |
-| [ScoreManager.cs](Assets/Scripts/ScoreManager.cs) | Computes bananas/clouds points, manages active scoring, and interfaces with high-score storage. | `IncrementScore()`, `DoubleScore()`, `CheckStateAndSaveScore()` |
-| [HighscoreData.cs](Assets/Scripts/HighscoreData.cs) | ScriptableObject handling descending high-score sorting and JSON local disk saving. | `AddNewHighscore()`, `SaveHighscoresToPersistentStorage()` |
-| [CameraFollowPlayer.cs](Assets/Scripts/CameraFollowPlayer.cs) | Clamped vertical-only camera follow utilizing `SmoothDamp` to tracking player ascent. | `ClampVerticalPosition()`, `CheckStateAndEnableFollowing()` |
-| [LowerBounds.cs](Assets/Scripts/LowerBounds.cs) | Safety net moving below the camera viewport, triggering GameOver on player entrance. | `moveUpWithCamera()`, `OnTriggerEnter2D()` |
-| [SoundManager.cs](Assets/Scripts/SoundManager.cs) | Registers game audio clips into direct-lookup collections for seamless event calls. | `PlaySound()`, `LoopSound()` |
-| [MenuManager.cs](Assets/Scripts/MenuManager.cs) | Configures active canvasses (Main Menu, High Scores, Game Over) based on current state. | `CheckStateAndShowMenu()`, `SetStateHiscores()` |
-
----
-
-## 🚀 Getting Started
-
-### 📋 Prerequisites
-- **Unity Editor**: `Unity 6.3` or higher.
-- **TextMesh Pro**: Requires **TextMesh Pro (TMP)** to render the typography and UI elements correctly. Ensure TMP Essentials are imported if prompted.
-- **Git LFS**: Ensure Git Large File Storage (LFS) is installed before cloning (as this project tracks sprite sheets, fonts, and audio clips using LFS).
-
-### ⚙️ Installation
-1. Install Git LFS (if not already installed):
-   ```bash
-   git lfs install
-   ```
-2. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/banana-climb-2d.git
-   ```
-3. Open the project root folder in **Unity Hub** (version 3.0+).
-4. Select the target LTS editor version and let Unity compile files and initialize packages.
-5. In the Project pane, navigate to `Assets/Scenes/` and double-click `SampleScene.unity` to open the primary workspace.
-
----
-
-## 🕹️ How to Play
-
-1. Press **Play** in the Unity Editor.
-2. In the **Main Menu**, select **Start Game** (or view the **High Scores** list).
-3. **Move Left/Right**: Guide the player character by moving your **Mouse cursor** across the screen.
-4. **Jump**: Press the **Left Mouse Button (LMB)** when grounded to execute a start jump.
-5. **Collect & Ascend**:
-   - Bounce on falling **Bananas** to add score points and gain height.
-   - Snag **Clouds** drifting across the viewport to **Double** your current score and bounce even higher!
-6. **Survive**: Do not let the character fall below the screen boundaries! If you miss the platforms and hit the bottom threshold, it is Game Over.
 
 ---
 
