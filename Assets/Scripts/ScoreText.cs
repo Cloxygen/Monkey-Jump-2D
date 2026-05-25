@@ -7,17 +7,10 @@ public class ScoreText : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI scoreText;
     [SerializeField] GameManager.State showDuringState = GameManager.State.Playing;
-    // Start is called before the first frame update
     void Start()
     {
         UpdateText();
         CheckStateAndShowScore();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void UpdateText()

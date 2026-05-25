@@ -1,18 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
-    
+
     [SerializeField] int initialPointsPerBanana = 10;
     [SerializeField] int pointsPerBananaIncrement = 10;
     [SerializeField] HighscoreData highscoreDataContainer;
 
-    public UnityEvent onScoreChanged = new UnityEvent();
+    public UnityEvent OnScoreChanged = new UnityEvent();
     private long _currentScore;
     private int _pointsPerBanana;
 
@@ -21,7 +20,7 @@ public class ScoreManager : MonoBehaviour
         private set 
         {
             _currentScore = value;
-            onScoreChanged?.Invoke();
+            OnScoreChanged?.Invoke();
         } 
     }
 

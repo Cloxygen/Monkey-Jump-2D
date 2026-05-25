@@ -34,12 +34,6 @@ public class VolumeController : MonoBehaviour
         slider.value = volume;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void SetInstance()
     {
         if (Instance == null)

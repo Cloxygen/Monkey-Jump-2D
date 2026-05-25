@@ -5,48 +5,42 @@ using TMPro;
 
 public class FloatingTextBanana : MonoBehaviour
 {
-    TextMeshPro textMeshPro;
+    TextMeshPro textMesh;
     [SerializeField] float fadeTime = 1f;
 
     private void OnEnable()
     {
-        textMeshPro.text = ScoreManager.Instance.PointsPerBanana.ToString();
+        textMesh.text = ScoreManager.Instance.PointsPerBanana.ToString();
         StartCoroutine(FadeOut());
     }
 
     void Awake()
     {
-        textMeshPro = GetComponent<TextMeshPro>();
-        textMeshPro.text = ScoreManager.Instance.PointsPerBanana.ToString();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        textMesh = GetComponent<TextMeshPro>();
+        textMesh.text = ScoreManager.Instance.PointsPerBanana.ToString();
     }
 
     IEnumerator FadeOut()
     {
-        Color color = textMeshPro.color;
+        Color color = textMesh.color;
         float newAlpha = 1f;
         while (color.a > 0f)
         {
             newAlpha -= Time.deltaTime / fadeTime;
             color.a = newAlpha;
-            textMeshPro.color = color;
+            textMesh.color = color;
 
             yield return null;
         }
 
-        ObjectPoolManager.Instance.DespawnObject("FloatingTextBanana", this.gameObject);
+        ObjectPoolManager.Instance.DespawnObject("FloatingTextBanana", gameObject);
         ResetObject();
     }
 
     public void ResetObject()
     {
-        Color color = textMeshPro.color;
+        Color color = textMesh.color;
         color.a = 1f;
-        textMeshPro.color = color;
+        textMesh.color = color;
     }
 }

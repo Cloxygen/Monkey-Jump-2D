@@ -19,10 +19,6 @@ public class ObjectPoolManager : MonoBehaviour
             CreatePool(settings);
         }
     }
-    void Start()
-    {
-
-    }
 
     public GameObject SpawnObject(string tag, Vector3 position)
     {
@@ -31,24 +27,25 @@ public class ObjectPoolManager : MonoBehaviour
             Debug.LogWarning("Object pool with tag " + tag + " doesn't exist.");
             return null;
         }
+
         if (poolDictionary[tag].Count < 1)
+        {
             FillPool(tag);
+        }
 
-        GameObject gameObject = poolDictionary[tag].Dequeue();
+        GameObject spawnedObject = poolDictionary[tag].Dequeue();
+        spawnedObject.SetActive(true);
+        spawnedObject.transform.position = position;
 
-        gameObject.SetActive(true);
-        gameObject.transform.position = position;
-
-        return gameObject;
-        
+        return spawnedObject;
     }
 
-    public void DespawnObject(string tag, GameObject gameObject)
+    public void DespawnObject(string tag, GameObject despawnedObject)
     {
         if (poolDictionary.ContainsKey(tag)) 
         {
-            poolDictionary[tag].Enqueue(gameObject);
-            gameObject.SetActive(false);
+            poolDictionary[tag].Enqueue(despawnedObject);
+            despawnedObject.SetActive(false);
         }
         else
         {
@@ -56,45 +53,44 @@ public class ObjectPoolManager : MonoBehaviour
         }
     }
 
-    void CreatePool(PoolSettings poolSettings)
+    void CreatePool(PoolSettings settings)
     {
         Queue<GameObject> objectPool = new Queue<GameObject>();
 
-        for (int i = 0; i < poolSettings.startSize; i++)
+        for (int i = 0; i < settings.startSize; i++)
         {
-            GameObject gameObject = Instantiate(poolSettings.prefab, parentObject);
-            gameObject.SetActive(false);
-
-            objectPool.Enqueue(gameObject);
+            objectPool.Enqueue(InstantiateNewPoolObject(settings));
         }
 
-        poolDictionary.Add(poolSettings.tag, objectPool);
+        poolDictionary.Add(settings.tag, objectPool);
     }
 
     void FillPool(string tag)
     {
-        Debug.Log("filling pools");
-        if (poolDictionary.ContainsKey(tag))
-        {
-            foreach(PoolSettings settings in poolSettings)
-            {
-                if (settings.tag == tag) 
-                {
-                    for (int i = 0; i < settings.startSize; i++)
-                    {
-                        GameObject gameObject = Instantiate(settings.prefab, parentObject);
-                        gameObject.SetActive(false);
-
-                        poolDictionary[tag].Enqueue(gameObject);
-                    }
-                    return;
-                }
-            }
-        }
-        else
+        if (!poolDictionary.ContainsKey(tag))
         {
             Debug.LogWarning("Object pool with tag " + tag + " doesn't exist.");
+            return;
         }
+
+        foreach (PoolSettings settings in poolSettings)
+        {
+            if (settings.tag == tag) 
+            {
+                for (int i = 0; i < settings.startSize; i++)
+                {
+                    poolDictionary[tag].Enqueue(InstantiateNewPoolObject(settings));
+                }
+                return;
+            }
+        }
+    }
+
+    private GameObject InstantiateNewPoolObject(PoolSettings settings)
+    {
+        GameObject newObject = Instantiate(settings.prefab, parentObject);
+        newObject.SetActive(false);
+        return newObject;
     }
 
     void SetInstance()

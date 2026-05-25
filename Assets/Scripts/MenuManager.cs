@@ -29,18 +29,9 @@ public class MenuManager : MonoBehaviour
         OnMenuStateChanged.AddListener(HandleStartMenu);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
-
     public void CheckStateAndShowMenu()
     {
-        startMenu.SetActive(false);
-        gameOverMenu.SetActive(false);
+        HideAllMenus();
         switch (GameManager.Instance.CurrentState)
         {
             case GameManager.State.GameOver:
@@ -48,11 +39,6 @@ public class MenuManager : MonoBehaviour
                 break;
             case GameManager.State.StartMenu:
                 HandleStartMenu();
-                break;
-            default:
-                startMenu.SetActive(false);
-                gameOverMenu.SetActive(false);
-                hiscoresMenu.SetActive(false);
                 break;
         }
     }
@@ -75,6 +61,13 @@ public class MenuManager : MonoBehaviour
                 break;
         }
     
+    }
+
+    private void HideAllMenus()
+    {
+        startMenu.SetActive(false);
+        gameOverMenu.SetActive(false);
+        hiscoresMenu.SetActive(false);
     }
 
     void SetInstance()

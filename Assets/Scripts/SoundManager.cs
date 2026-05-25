@@ -18,24 +18,16 @@ public class SoundManager : MonoBehaviour
         oneShotAudioSource = gameObject.AddComponent<AudioSource>();
     }
 
-    private void Start()
-    {
-
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void SetInstance()
     {
         if (Instance == null)
+        {
             Instance = this;
+        }
         else
         {
             Debug.Log("Sound Manager already exists");
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
@@ -43,7 +35,6 @@ public class SoundManager : MonoBehaviour
     {
         soundDictionary.Clear();
 
-        // Add sound clips to the dictionary with their respective names
         foreach (var soundEntry in soundList)
         {
             if (!soundDictionary.ContainsKey(soundEntry.name))
@@ -59,11 +50,11 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySound(string soundName)
     {
-        if (soundDictionary.ContainsKey(soundName))
+        if (soundDictionary.TryGetValue(soundName, out AudioClip clip))
         {
             if (oneShotAudioSource != null && VolumeController.Instance != null)
             {
-                oneShotAudioSource.PlayOneShot(soundDictionary[soundName], VolumeController.Instance.Volume);
+                oneShotAudioSource.PlayOneShot(clip, VolumeController.Instance.Volume);
             }
         }
         else
@@ -74,10 +65,10 @@ public class SoundManager : MonoBehaviour
 
     public void LoopSound(string soundName, AudioSource audioSource)
     {
-        if (soundDictionary.ContainsKey(soundName))
+        if (soundDictionary.TryGetValue(soundName, out AudioClip clip))
         {
             audioSource.loop = true;
-            audioSource.clip = soundDictionary[soundName];
+            audioSource.clip = clip;
             audioSource.volume = VolumeController.Instance.Volume;
             audioSource.Play();
         }

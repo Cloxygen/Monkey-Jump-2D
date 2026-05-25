@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] Collider2D collider;
+    [SerializeField] Collider2D playerCollider;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] Animator animator;
@@ -28,15 +28,15 @@ public class PlayerMovement : MonoBehaviour
     float scaleX;
     bool jumpEnabled = false;
     bool shouldCameraShake = false;
+    Camera mainCamera;
 
 
-    // Start is called before the first frame update
     void Start()
     {
+        mainCamera = Camera.main;
         scaleX = Mathf.Abs(transform.localScale.x);
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         bool wasGroundedBeforeFrame = isGrounded;
@@ -47,17 +47,7 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(CameraShake());
         }
 
-        if (!isGrounded && !needsToJump)
-        {
-            DoGravity();
-        }
-        else
-        {
-            if (!needsToJump)
-                velocity.y = 0f;
-            else if (jumpEnabled)
-                Jump();
-        }
+        ApplyVerticalMovement();
 
         FollowCursor();
         Move();
@@ -73,11 +63,29 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void ApplyVerticalMovement()
+    {
+        if (!isGrounded && !needsToJump)
+        {
+            DoGravity();
+        }
+        else
+        {
+            if (!needsToJump)
+            {
+                velocity.y = 0f;
+            }
+            else if (jumpEnabled)
+            {
+                Jump();
+            }
+        }
+    }
+
     void DoGravity()
     {
         velocity.y -= gravity * Time.fixedDeltaTime;
         velocity.y = Mathf.Clamp(velocity.y, -maxYVelocity, maxYVelocity);
-        
     }
 
     void Jump()
@@ -89,25 +97,25 @@ public class PlayerMovement : MonoBehaviour
 
     void FollowCursor()
     {
-        float cursorPosX = Camera.main.ScreenToWorldPoint(Input.mousePosition).x;
+        float cursorPosX = mainCamera.ScreenToWorldPoint(Input.mousePosition).x;
         float playerPosX = transform.position.x;
         float direction = cursorPosX - playerPosX;
-        float xVelocity = direction/2 * followSpeed;
+        float xVelocity = (direction / 2) * followSpeed;
         xVelocity = Mathf.Clamp(xVelocity, -maxXVelocity, maxXVelocity);
-        if(xVelocity > 0)
-        {
-            Vector3 scale = transform.localScale;
-            scale.x = scaleX;
-            transform.localScale = scale;
-        }
-        if(xVelocity < 0)
-        {
-            Vector3 scale = transform.localScale;
-            scale.x = -scaleX;
-            transform.localScale = scale;
-        }
+
+        UpdateFacingDirection(xVelocity);
 
         velocity.x = xVelocity;
+    }
+
+    private void UpdateFacingDirection(float horizontalVelocity)
+    {
+        if (horizontalVelocity != 0f)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Sign(horizontalVelocity) * scaleX;
+            transform.localScale = scale;
+        }
     }
 
     void Move()
@@ -118,9 +126,9 @@ public class PlayerMovement : MonoBehaviour
 
     bool IsGrounded()
     {
-        float checkDistance = collider.bounds.extents.y + groundedDistance;
-        RaycastHit2D hit = Physics2D.Raycast(collider.bounds.center, Vector2.down, checkDistance, groundLayer);
-        Debug.DrawRay(collider.bounds.center, Vector2.down * checkDistance, Color.red);
+        float checkDistance = playerCollider.bounds.extents.y + groundedDistance;
+        RaycastHit2D hit = Physics2D.Raycast(playerCollider.bounds.center, Vector2.down, checkDistance, groundLayer);
+        Debug.DrawRay(playerCollider.bounds.center, Vector2.down * checkDistance, Color.red);
         
         return hit.collider != null;
     }

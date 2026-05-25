@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cloud : MonoBehaviour
 {
-    [SerializeField] Collider2D collider;
+    [SerializeField] Collider2D cloudCollider;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] float flySpeed = 1f;
     [SerializeField] float fadeTime = .5f;
@@ -12,11 +12,10 @@ public class Cloud : MonoBehaviour
     bool isBounced = false;
     Vector3 defaultScale;
 
-    // Start is called before the first frame update
     void Awake()
     {
         defaultScale = transform.localScale;
-        collider.isTrigger = true;
+        cloudCollider.isTrigger = true;
     }
 
     void Start()
@@ -35,7 +34,6 @@ public class Cloud : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!isBounced)
@@ -72,26 +70,37 @@ public class Cloud : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        PlayerMovement playerMovement = other.gameObject.GetComponent<PlayerMovement>();
-        if (playerMovement != null)
+        if (other.TryGetComponent(out PlayerMovement playerMovement))
         {
-            this.collider.enabled = false;
-            playerMovement.Bounce();
-            ScoreManager.Instance.DoubleScore();
-            StartCoroutine(BouncedAnimation());
-            ObjectPoolManager.Instance.SpawnObject("CloudExplode", transform.position);
-            ObjectPoolManager.Instance.SpawnObject("FloatingTextCloud", transform.position);
-            isBounced = true;
-            SoundManager.Instance.PlaySound("CloudBounce");
+            BouncePlayer(playerMovement);
         }
         else if (other.CompareTag("LowerBounds"))
         {
-
-            ObjectPoolManager.Instance.DespawnObject("Cloud", this.gameObject);
-            ResetObject();
+            Despawn();
         }
         else
-            SetDirection(!isMovingRight);
+        {
+            ChangeMovementDirection();
+        }
+    }
+
+    private void BouncePlayer(PlayerMovement playerMovement)
+    {
+        cloudCollider.enabled = false;
+        playerMovement.Bounce();
+        ScoreManager.Instance.DoubleScore();
+        StartCoroutine(BouncedAnimation());
+
+        ObjectPoolManager.Instance.SpawnObject("CloudExplode", transform.position);
+        ObjectPoolManager.Instance.SpawnObject("FloatingTextCloud", transform.position);
+        
+        isBounced = true;
+        SoundManager.Instance.PlaySound("CloudBounce");
+    }
+
+    private void ChangeMovementDirection()
+    {
+        SetDirection(!isMovingRight);
     }
 
     IEnumerator BouncedAnimation()
@@ -116,7 +125,7 @@ public class Cloud : MonoBehaviour
 
     public void ResetObject()
     {
-        this.collider.enabled = true;
+        cloudCollider.enabled = true;
 
         Color color = spriteRenderer.color;
         color.a = 1f;

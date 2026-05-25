@@ -5,7 +5,7 @@ using TMPro;
 
 public class FloatingTextCloud : MonoBehaviour
 {
-    TextMeshPro textMeshPro;
+    TextMeshPro textMesh;
     [SerializeField] float fadeTime = 1f;
     [SerializeField] string text = "x2";
     [SerializeField] Vector3 moveDirection = Vector3.zero;
@@ -19,11 +19,10 @@ public class FloatingTextCloud : MonoBehaviour
 
     void Awake()
     {
-        textMeshPro = GetComponent<TextMeshPro>();
-        textMeshPro.text = text;
+        textMesh = GetComponent<TextMeshPro>();
+        textMesh.text = text;
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.position += moveDirection * speed * Time.deltaTime;
@@ -32,25 +31,25 @@ public class FloatingTextCloud : MonoBehaviour
 
     IEnumerator FadeOut()
     {
-        Color color = textMeshPro.color;
+        Color color = textMesh.color;
         float newAlpha = 1f;
         while (color.a > 0f)
         {
             newAlpha -= Time.deltaTime / fadeTime;
             color.a = newAlpha;
-            textMeshPro.color = color;
+            textMesh.color = color;
 
             yield return null;
         }
 
-        ObjectPoolManager.Instance.DespawnObject("FloatingTextCloud", this.gameObject);
+        ObjectPoolManager.Instance.DespawnObject("FloatingTextCloud", gameObject);
         ResetObject();
     }
 
     public void ResetObject()
     {
-        Color color = textMeshPro.color;
+        Color color = textMesh.color;
         color.a = 1f;
-        textMeshPro.color = color;
+        textMesh.color = color;
     }
 }

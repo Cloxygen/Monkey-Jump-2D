@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ObjectSpawner : MonoBehaviour
 {
-    [SerializeField] Transform camera;
+    [SerializeField] Transform cameraTransform;
     [Header("Settings")]
     [SerializeField] float preSpawnDistance = 10f;
     [SerializeField] float startHeight = 5f;
@@ -35,38 +35,45 @@ public class ObjectSpawner : MonoBehaviour
     void Update()
     {
         if (!isActive)
-            return;
-        if (camera.transform.position.y + preSpawnDistance > lastObjectSpawned.position.y)
         {
-            if (spawnCount % cloudFrequency == 0 
-                && 
-                camera.transform.position.y > cameraHeightToSpawnClouds)
+            return;
+        }
+
+        if (cameraTransform.position.y + preSpawnDistance > lastObjectSpawned.position.y)
+        {
+            if (spawnCount % cloudFrequency == 0 && cameraTransform.position.y > cameraHeightToSpawnClouds)
+            {
                 SpawnCloud();
+            }
             else
+            {
                 SpawnBanana();
+            }
         }
     }
 
     void SpawnBanana()
     {
         Vector3 spawnPosition = Vector3.zero;
-
-        if (lastObjectSpawned == null)
-            spawnPosition.y = startHeight;
-        else
-            spawnPosition.y = lastObjectSpawned.position.y + distanceBetween;
-
+        spawnPosition.y = CalculateNextSpawnHeight();
         spawnPosition.x = GetRandomHorizontalPositionAroundCenter();
 
         UpdateHorizontalVariance();
 
         lastObjectSpawned = ObjectPoolManager.Instance.SpawnObject("Banana", spawnPosition).transform;
-
         lastObjectSpawned.localScale *= currentBananaScale;
 
         UpdateBananaScale();
-
         spawnCount++;
+    }
+
+    float CalculateNextSpawnHeight()
+    {
+        if (lastObjectSpawned == null)
+        {
+            return startHeight;
+        }
+        return lastObjectSpawned.position.y + distanceBetween;
     }
 
     void UpdateHorizontalVariance()
@@ -75,7 +82,9 @@ public class ObjectSpawner : MonoBehaviour
         {
             currentHorizontalVariance += varianceRamp;
             if (currentHorizontalVariance > maxHorizontalVariance)
+            {
                 currentHorizontalVariance = maxHorizontalVariance;
+            }
         }
     }
 
@@ -91,16 +100,14 @@ public class ObjectSpawner : MonoBehaviour
     void SpawnCloud()
     {
         Vector3 spawnPosition = Vector3.zero;
-
-        if (lastObjectSpawned == null)
-            spawnPosition.y = startHeight;
-        else
-            spawnPosition.y = lastObjectSpawned.position.y + distanceBetween;
-
+        spawnPosition.y = CalculateNextSpawnHeight();
         spawnPosition.x = Random.Range(minXPosition, maxXPosition);
 
         lastObjectSpawned = ObjectPoolManager.Instance.SpawnObject("Cloud", spawnPosition).transform;
-        lastObjectSpawned.GetComponent<Cloud>().SetDirection(RandomBool());
+        if (lastObjectSpawned.TryGetComponent(out Cloud cloud))
+        {
+            cloud.SetDirection(RandomBool());
+        }
 
         spawnCount++;
     }
@@ -119,10 +126,7 @@ public class ObjectSpawner : MonoBehaviour
 
     bool RandomBool()
     {
-        if (Random.value >= 0.5f)
-            return true;
-        else
-            return false;
+        return Random.value >= 0.5f;
     }
 
 
@@ -135,7 +139,7 @@ public class ObjectSpawner : MonoBehaviour
 
         SpawnBanana();
 
-        while (camera.transform.position.y + preSpawnDistance >= lastObjectSpawned.position.y)
+        while (cameraTransform.position.y + preSpawnDistance >= lastObjectSpawned.position.y)
         {
             SpawnBanana();
         }

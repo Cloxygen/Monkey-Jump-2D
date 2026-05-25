@@ -5,18 +5,17 @@ using UnityEngine.Events;
 
 public class Banana : MonoBehaviour
 {
-    [SerializeField] Collider2D collider;
+    [SerializeField] Collider2D bananaCollider;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] float fallSpeed = .1f;
     [SerializeField] float fadeTime = .5f;
     [SerializeField] float bouncedFallSpeed = 1f;
     Vector3 defaultScale;
 
-    // Start is called before the first frame update
     void Awake()
     {
         defaultScale = transform.localScale;
-        collider.isTrigger = true;
+        bananaCollider.isTrigger = true;
     }
 
     void Start()
@@ -35,7 +34,6 @@ public class Banana : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         Fall();
@@ -50,25 +48,36 @@ public class Banana : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        PlayerMovement playerMovement = collision.gameObject.GetComponent<PlayerMovement>();
-        if (playerMovement != null)
+        if (collision.TryGetComponent(out PlayerMovement playerMovement))
         {
-            this.collider.enabled = false;
-            playerMovement.Bounce();
-            StartCoroutine(BouncedAnimation());
-            ObjectPoolManager.Instance.SpawnObject("BananaExplode", transform.position);
-            ObjectPoolManager.Instance.SpawnObject("FloatingTextBanana", transform.position);
-            SoundManager.Instance.PlaySound("BananaBounce");
-            ScoreManager.Instance.IncrementScore();
+            BouncePlayer(playerMovement);
         }
         else if (collision.CompareTag("BananaFloor"))
         {
-            this.collider.enabled = false;
-            StartCoroutine(FloorFadeAnimation());
+            HandleFloorCollision();
         }
         else if (collision.CompareTag("LowerBounds"))
+        {
             Despawn();
-        
+        }
+    }
+
+    private void BouncePlayer(PlayerMovement playerMovement)
+    {
+        bananaCollider.enabled = false;
+        playerMovement.Bounce();
+        StartCoroutine(BouncedAnimation());
+
+        ObjectPoolManager.Instance.SpawnObject("BananaExplode", transform.position);
+        ObjectPoolManager.Instance.SpawnObject("FloatingTextBanana", transform.position);
+        SoundManager.Instance.PlaySound("BananaBounce");
+        ScoreManager.Instance.IncrementScore();
+    }
+
+    private void HandleFloorCollision()
+    {
+        bananaCollider.enabled = false;
+        StartCoroutine(FloorFadeAnimation());
     }
     
     IEnumerator BouncedAnimation()
@@ -93,7 +102,7 @@ public class Banana : MonoBehaviour
 
     public void ResetObject()
     {
-        this.collider.enabled = true;
+        bananaCollider.enabled = true;
 
         Color color = spriteRenderer.color;
         color.a = 1f;

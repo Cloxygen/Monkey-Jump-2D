@@ -9,6 +9,11 @@ public class HighScoresText : MonoBehaviour
 
     void OnEnable()
     {
+        PopulateHighScoreTexts();
+    }
+
+    private void PopulateHighScoreTexts()
+    {
         if (ScoreManager.Instance == null || ScoreManager.Instance.Highscores == null)
         {
             return;
@@ -26,17 +31,5 @@ public class HighScoresText : MonoBehaviour
                 scoreTexts[i].text = ScoreManager.Instance.Highscores[i].ToString();
             }
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
